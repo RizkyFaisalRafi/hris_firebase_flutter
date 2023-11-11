@@ -256,7 +256,7 @@ class RegisterProvider extends ChangeNotifier {
     if (!emailVerified!) {
       Timer.periodic(const Duration(seconds: 3), (timer) async {
         log(timerCalled);
-        await firebaseAuth.currentUser!.reload();
+        await firebaseAuth.currentUser?.reload();
         final user = firebaseAuth.currentUser;
         if (user!.emailVerified) {
           emailVerified = user.emailVerified;
