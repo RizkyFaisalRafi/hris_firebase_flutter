@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hris_firebase_flutter/view_model/get_data_provider.dart';
 import 'package:hris_firebase_flutter/view_model/home_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 
 import '../common/theme.dart';
 
-class BodyHome extends StatelessWidget {
+class BodyHome extends StatefulWidget {
   const BodyHome({super.key});
+
+  @override
+  State<BodyHome> createState() => _BodyHomeState();
+}
+
+class _BodyHomeState extends State<BodyHome> {
+  @override
+  void initState() {
+    super.initState();
+
+    final providerGetData = context.read<GetDataProvider>();
+    providerGetData.getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +46,11 @@ class BodyHome extends StatelessWidget {
                     child: Column(
                       children: [
                         // PRESENSIKU
-                        Row(
-                          children: [
-                            Image.asset(
-                              'assets/logo_app.png',
-                              width: 44,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'PRESENSIKU',
-                              style: fontRoboto.copyWith(
-                                fontSize: 20,
-                                fontWeight: bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
+                        Image.asset(
+                          'assets/logo_app.png',
+                          width: 80,
                         ),
+                        const SizedBox(width: 12),
 
                         const SizedBox(height: 16),
 
@@ -72,91 +74,95 @@ class BodyHome extends StatelessWidget {
 
                               // NOTE: ISI
                               Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Selamat Pagi, Rizky Faisal Rafi',
-                                      style: fontRoboto.copyWith(
-                                        fontSize: 12,
-                                        fontWeight: semiBold,
+                                child: Consumer<GetDataProvider>(
+                                    builder: (context, data, widget) {
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Selamat Bekerja ${data.usersData?.name ?? 'Name Not Found'}",
+                                        style: fontRoboto.copyWith(
+                                          fontSize: 12,
+                                          fontWeight: semiBold,
+                                        ),
                                       ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.access_time_sharp,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Daily Shift: 08.00 - 16.00',
-                                          style: fontRoboto.copyWith(
-                                            fontSize: 12,
-                                            fontWeight: semiBold,
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.access_time_sharp,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Daily Shift: Maintenance',
+                                            style: fontRoboto.copyWith(
+                                              fontSize: 12,
+                                              fontWeight: semiBold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
 
-                                    // Sisa Cuti, Agenda, Jadwal Kerja
-                                    Row(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Image.asset(
-                                              'assets/sisa_cuti.png',
-                                              width: 40,
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              '10 Sisa Cuti',
-                                              style: fontRoboto.copyWith(
-                                                fontSize: 12,
-                                                fontWeight: medium,
+                                      // Sisa Cuti, Agenda, Jadwal Kerja
+                                      Row(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Image.asset(
+                                                'assets/sisa_cuti.png',
+                                                width: 40,
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Column(
-                                          children: [
-                                            Image.asset(
-                                              'assets/agenda.png',
-                                              width: 40,
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Agenda',
-                                              style: fontRoboto.copyWith(
-                                                fontSize: 12,
-                                                fontWeight: medium,
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                '${data.usersData?.sisaCuti ?? 'Null'} Sisa Cuti',
+                                                style: fontRoboto.copyWith(
+                                                  fontSize: 12,
+                                                  fontWeight: medium,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Column(
-                                          children: [
-                                            Image.asset(
-                                              'assets/jadwal_kerja.png',
-                                              width: 40,
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Jadwal Kerja',
-                                              style: fontRoboto.copyWith(
-                                                fontSize: 12,
-                                                fontWeight: medium,
+                                            ],
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Column(
+                                            children: [
+                                              Image.asset(
+                                                'assets/agenda.png',
+                                                width: 40,
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                'Agenda',
+                                                style: fontRoboto.copyWith(
+                                                  fontSize: 12,
+                                                  fontWeight: medium,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Column(
+                                            children: [
+                                              Image.asset(
+                                                'assets/jadwal_kerja.png',
+                                                width: 40,
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                'Jadwal Kerja',
+                                                style: fontRoboto.copyWith(
+                                                  fontSize: 12,
+                                                  fontWeight: medium,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                }),
                               ),
                               const SizedBox(width: 4),
                             ],
@@ -332,7 +338,7 @@ class BodyHome extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(10))),
                             onPressed: () {
                               final provider = context.read<HomeProvider>();
-                              // provider.launchQuesioner();
+                              provider.launchQuesioner();
                             },
                             child: Text(
                               'Isi Quesioner',

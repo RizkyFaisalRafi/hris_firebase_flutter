@@ -27,16 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Consumer<RegisterProvider>(builder: (context, provider, _) {
       return Consumer<HomeProvider>(builder: (context, bodyNav, _) {
         return Scaffold(
-          appBar: AppBar(
-            actions: [
-              IconButton(
-                onPressed: () {
-                  provider.logOut();
-                },
-                icon: const Icon(Icons.logout),
-              ),
-            ],
-          ),
           body: provider.emailVerified ?? true
               ? const Home()
               : Center(
