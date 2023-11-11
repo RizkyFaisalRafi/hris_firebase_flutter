@@ -30,10 +30,10 @@ class HomeProvider extends ChangeNotifier {
         return const BodyHome();
       // History Screen
       case 1:
-        // return const HistoryPage();
+        return const HistoryPage();
       // Payroll/Penggajian Screen
       case 2:
-        // return const PayrollPage();
+        return const PayrollPage();
       // Account/Profil Screen
       case 3:
         // return const AccountPage();
