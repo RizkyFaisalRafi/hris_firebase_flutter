@@ -13,6 +13,7 @@ class RegisterProvider extends ChangeNotifier {
   get formKey => _formKey;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  User? get currentUser => firebaseAuth.currentUser;
 
   // Dispose method to clean up resources(Masih error)
   @override
@@ -225,13 +226,17 @@ class RegisterProvider extends ChangeNotifier {
       // Email Verifikasi
       await userCredential.user!.sendEmailVerification();
 
+      // Create Document ID
+      // final docID = userCredential.user?.uid;
+
+      // Update Data Ke Firestore
       firebaseFirestore.collection("users").doc(userCredential.user?.uid).set({
         "uid": userCredential.user!.uid,
         "name": nameController.text,
         "nip": nipController.text,
-        "number_phone": numberPhoneController.text,
-        "tanggal_lahir": tanggalController.text,
-        "jenis_kelamin": selectedValueGender?.genderName,
+        "numberPhone": numberPhoneController.text,
+        "tanggalLahir": tanggalController.text,
+        "jenisKelamin": selectedValueGender?.genderName,
         "divisi": selectedValueDivision?.divisionName,
         "jabatan": selectedValuePosition?.positionName,
         "email": userCredential.user!.email,
@@ -271,10 +276,12 @@ class RegisterProvider extends ChangeNotifier {
     try {
       await firebaseAuth.signOut();
     } catch (e) {
-      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
-        content: Text(e.toString()),
-        backgroundColor: Colors.red,
-      ));
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
