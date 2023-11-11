@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hris_firebase_flutter/common/theme.dart';
 import 'package:hris_firebase_flutter/view_model/register_provider.dart';
 import 'package:hris_firebase_flutter/widgets/button_custom.dart';
 import 'package:hris_firebase_flutter/widgets/custom_form.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
-class RegisterScreen extends StatefulWidget {
-  final Function() onRegister;
-  final Function() onLogin;
-  const RegisterScreen(
-      {super.key, required this.onRegister, required this.onLogin});
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
+  // @override
   @override
   Widget build(BuildContext context) {
     final providerRegister = context.read<RegisterProvider>();
     // mengakses data dari state
     final provider = Provider.of<RegisterProvider>(context, listen: false);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -95,14 +91,69 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         height: 20,
                       ),
 
-                      // TTL
                       CustomForm(
-                        controller: provider.ttlController,
-                        validate: provider.validateTtl,
-                        title: 'Tempat, Tanggal Lahir',
-                        typeForm: TextInputType.datetime,
+                        controller: provider.numberPhoneController,
+                        validate: provider.validateNumberPhone,
+                        title: 'Nomor Telepon',
+                        typeForm: TextInputType.number,
                         obscure: false,
                         togleObscure: provider.toggleObscureText,
+                      ),
+
+                      const SizedBox(
+                        height: 20,
+                      ),
+
+                      // TTL
+                      // CustomForm(
+                      //   controller: provider.ttlController,
+                      //   validate: provider.validateTtl,
+                      //   title: 'Tempat, Tanggal Lahir',
+                      //   typeForm: TextInputType.datetime,
+                      //   obscure: false,
+                      //   togleObscure: provider.toggleObscureText,
+                      // ),
+
+                      // Tanggal Lahir
+                      TextFormField(
+                        controller: provider.tanggalController =
+                            TextEditingController(
+                          text: DateFormat('dd/MM/yyyy').format(provider.date),
+                        ),
+                        validator: (value) =>
+                            provider.validateTtl(value ?? 'Null'),
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: blackColor),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                            borderSide: BorderSide(
+                              color: Colors.green,
+                            ),
+                          ),
+                          label: Text(
+                            'Tanggal Lahir',
+                            style: GoogleFonts.poppins(
+                                fontWeight: reguler, color: blackColor),
+                          ),
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                provider.selectDate(context, provider);
+                              },
+                              icon: Icon(
+                                Icons.date_range_outlined,
+                                color: greyColor,
+                              )),
+                          border: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                        ),
                       ),
 
                       const SizedBox(
@@ -336,8 +387,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Button Daftar
                       ButtonCustom(
                         onTap: () {
-                          // Navigasi ke SignIn Page
-                          widget.onLogin();
+                          provider.authenticateRegister();
                         },
                         label: 'Daftar',
                         isExpand: true,

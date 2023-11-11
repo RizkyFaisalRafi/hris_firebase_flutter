@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "716852000550",
+    "project_id": "hris-pt-netizennetwork",
+    "storage_bucket": "hris-pt-netizennetwork.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716852000550:android:a2a8a098fc8c2144a8b3e7",
+        "android_client_info": {
+          "package_name": "com.example.hris_firebase_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4_bmHfREiv5ABhKmpsRHt0TZUyaWoBSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
