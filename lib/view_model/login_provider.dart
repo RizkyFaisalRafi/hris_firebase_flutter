@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../common/keys.dart';
 
 class LoginProvider extends ChangeNotifier {
   final _formKey = GlobalKey<FormState>();
@@ -12,6 +15,9 @@ class LoginProvider extends ChangeNotifier {
 
   bool _obscureText = true;
   bool get obscureText => _obscureText;
+
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  // FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   // Validasi Email
   String? validateEmail(email) {
@@ -39,5 +45,19 @@ class LoginProvider extends ChangeNotifier {
   void toggleObscureText() {
     notifyListeners();
     _obscureText = !_obscureText;
+  }
+
+  authenticateLogin() async {
+    // ignore: unused_local_variable
+    UserCredential userCredential;
+    try {
+      userCredential = await firebaseAuth.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text,);
+    } on FirebaseAuthException catch (error) {
+      Keys.scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+        content: Text(error.code),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

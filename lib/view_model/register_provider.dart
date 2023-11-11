@@ -1,11 +1,26 @@
+import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hris_firebase_flutter/common/keys.dart';
 
 class RegisterProvider extends ChangeNotifier {
   final _formKey = GlobalKey<FormState>();
   get formKey => _formKey;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+  // Dispose method to clean up resources(Masih error)
+  @override
+  void dispose() {
+    nameController.dispose();
+    nipController.dispose();
+    super.dispose();
+  }
 
   // Name
   final TextEditingController _nameController = TextEditingController();
@@ -15,21 +30,8 @@ class RegisterProvider extends ChangeNotifier {
   final TextEditingController _nipController = TextEditingController();
   TextEditingController get nipController => _nipController;
 
-  // Tempat, Tanggal Lahir
-  final TextEditingController _ttlController = TextEditingController();
-  TextEditingController get ttlController => _ttlController;
-
-  // Gender
-  // final TextEditingController _genderController = TextEditingController();
-  // TextEditingController get genderController => _genderController;
-
-  // Divisi/Bagian
-  // final TextEditingController _divisionController = TextEditingController();
-  // TextEditingController get divisionController => _divisionController;
-
-  // Posisi / Jabatan
-  // final TextEditingController _positionController = TextEditingController();
-  // TextEditingController get positionController => _positionController;
+  // Tanggal Lahir
+  TextEditingController tanggalController = TextEditingController();
 
   // Email
   final TextEditingController _emailController = TextEditingController();
@@ -46,6 +48,10 @@ class RegisterProvider extends ChangeNotifier {
   // Address / Alamat
   final TextEditingController _addressController = TextEditingController();
   TextEditingController get addressController => _addressController;
+
+  // Number Phone
+  final TextEditingController _numberPhoneController = TextEditingController();
+  TextEditingController get numberPhoneController => _numberPhoneController;
 
   bool _obscureText = true;
   bool get obscureText => _obscureText;
@@ -126,41 +132,25 @@ class RegisterProvider extends ChangeNotifier {
     }
   }
 
-  // Validator TTL
-  String? validateTtl(String ttl) {
-    if (ttl.isEmpty) {
-      return 'Tempat, Tanggal Lahir tidak boleh kosong!';
+  // Validator Number Telephone
+  String? validateNumberPhone(String numberPhone) {
+    if (numberPhone.isEmpty) {
+      return 'Nomor Telephone tidak boleh kosong!';
+    } else if (numberPhone.split('').length < 2) {
+      return 'Nomor Telephone harus terdiri dari minimal 2 kata!';
     } else {
       return null;
     }
   }
 
-  // Validator Gender
-  // String? validateGender(String gender) {
-  //   if (gender.isEmpty) {
-  //     return 'Jenis Kelamin tidak boleh kosong!';
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  // Validator Divisi
-  // String? validateDivision(String division) {
-  //   if (division.isEmpty) {
-  //     return 'Divisi tidak boleh kosong!';
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  // Validator Jabatan
-  // String? validatePosition(String position) {
-  //   if (position.isEmpty) {
-  //     return 'Posisi Jabatan tidak boleh kosong!';
-  //   } else {
-  //     return null;
-  //   }
-  // }
+  // Validator Tanggal Lahir
+  String? validateTtl(String tanggalLahir) {
+    if (tanggalLahir.isEmpty) {
+      return 'Tanggal Lahir tidak boleh kosong!';
+    } else {
+      return null;
+    }
+  }
 
   // Validator Email
   String? validateEmail(email) {
@@ -224,6 +214,105 @@ class RegisterProvider extends ChangeNotifier {
             width: 150,
             height: 150,
           );
+  }
+
+  authenticateRegister() async {
+    UserCredential userCredential;
+    try {
+      userCredential = await firebaseAuth.createUserWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+
+      // Email Verifikasi
+      await userCredential.user!.sendEmailVerification();
+
+      firebaseFirestore.collection("users").doc(userCredential.user?.uid).set({
+        "uid": userCredential.user!.uid,
+        "name": nameController.text,
+        "nip": nipController.text,
+        "number_phone": numberPhoneController.text,
+        "tanggal_lahir": tanggalController.text,
+        "jenis_kelamin": selectedValueGender?.genderName,
+        "divisi": selectedValueDivision?.divisionName,
+        "jabatan": selectedValuePosition?.positionName,
+        "email": userCredential.user!.email,
+        "password": passwordController.text,
+        "sisaCuti": sisaCutiController.text,
+        "alamat": addressController.text,
+      });
+    } on FirebaseAuthException catch (error) {
+      Keys.scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+        content: Text(error.code),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  bool? emailVerified;
+  // Memperbarui status email verifikasi state
+  Future<void> updateEmailVerificationState() async {
+    String timerCalled = 'Timer Called';
+    emailVerified = firebaseAuth.currentUser!.emailVerified;
+    // Akan me reload otomatis 3 detik apabila email belum diverifikasi
+    if (!emailVerified!) {
+      Timer.periodic(const Duration(seconds: 3), (timer) async {
+        log(timerCalled);
+        await firebaseAuth.currentUser?.reload();
+        final user = firebaseAuth.currentUser;
+        if (user!.emailVerified) {
+          emailVerified = user.emailVerified;
+          timer.cancel(); // Ketika Sudah diverifikasi akan berhenti timernya
+          notifyListeners();
+        }
+      });
+    }
+  }
+
+  Future<void> logOut() async {
+    try {
+      await firebaseAuth.signOut();
+    } catch (e) {
+      Keys.scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
+        content: Text(e.toString()),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  final primaryColor = const Color(0xff7CA153);
+  // tanggal
+  DateTime _date = DateTime.now();
+  final currentDate = DateTime.now();
+  DateTime get date => _date;
+
+  void updateDate(DateTime selectDate) {
+    _date = selectDate;
+    notifyListeners();
+  }
+
+  Future<void> selectDate(
+      BuildContext context, RegisterProvider provider) async {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme.copyWith(
+      primary: primaryColor,
+      onPrimary: Colors.white,
+    );
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+            data: theme.copyWith(
+              colorScheme: colorScheme,
+            ),
+            child: child!);
+      },
+    );
+
+    if (pickedDate != null) {
+      provider.updateDate(pickedDate);
+    }
   }
 }
 
