@@ -82,7 +82,7 @@ class _BodyHomeState extends State<BodyHome> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Selamat Bekerja ${data.usersData?.name ?? 'Name Not Found'}",
+                                        "Selamat Bekerja ${data.usersData?.name ?? 'Null'}",
                                         style: fontRoboto.copyWith(
                                           fontSize: 12,
                                           fontWeight: semiBold,
