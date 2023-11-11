@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hris_firebase_flutter/common/keys.dart';
 import 'package:hris_firebase_flutter/view/splash_screen.dart';
+import 'package:hris_firebase_flutter/view_model/home_provider.dart';
 import 'package:hris_firebase_flutter/view_model/register_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -43,6 +44,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (_) => RegisterProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => HomeProvider(),
         ),
       ],
       child: MaterialApp(
