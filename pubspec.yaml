@@ -40,6 +40,12 @@ dependencies:
   google_fonts: ^6.1.0
   provider: ^6.0.5
   iconify_flutter: ^0.0.5
+  
+  # FIREBASE
+  firebase_core: ^2.21.0
+  firebase_auth: ^4.13.0
+  cloud_firestore: ^4.13.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
