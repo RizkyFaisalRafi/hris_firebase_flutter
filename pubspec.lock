@@ -264,6 +264,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  framework:
+    dependency: "direct main"
+    description:
+      name: framework
+      sha256: fd3c251f8203b092a9757238782f4a76b020ba835b47903d77e6667a7a98b78a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   google_fonts:
     dependency: "direct main"
     description:
