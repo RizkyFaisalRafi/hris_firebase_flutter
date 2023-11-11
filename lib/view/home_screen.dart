@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hris_firebase_flutter/common/home.dart';
+import 'package:hris_firebase_flutter/view/login_screen.dart';
+import 'package:hris_firebase_flutter/view_model/home_provider.dart';
 import 'package:hris_firebase_flutter/view_model/register_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<RegisterProvider>(builder: (context, provider, _) {
-      return Scaffold(
+      return Consumer<HomeProvider>(builder: (context, bodyNav, _) {
+        return Scaffold(
           appBar: AppBar(
             actions: [
               IconButton(
@@ -33,9 +37,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          body: provider.emailVerified ?? false
-              ? const Text('Email Verified')
-              : const Text('Email Is Not Verified'));
+          body: provider.emailVerified ?? true
+              ? const Home()
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Email Is Not Verified'),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LoginScreen(),
+                              ),
+                            );
+                            provider.logOut();
+                          },
+                          child: const Text('Log Out'))
+                    ],
+                  ),
+                ),
+        );
+      });
     });
   }
 }
