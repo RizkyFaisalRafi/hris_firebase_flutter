@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 
-// import 'package:hris_firebase_flutter/view/account_page.dart';
-
 import 'package:hris_firebase_flutter/view/history_page.dart';
 import 'package:hris_firebase_flutter/view/payroll_page.dart';
 import 'package:hris_firebase_flutter/widgets/body_home.dart';
