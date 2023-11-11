@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-import 'package:hris_firebase_flutter/view/account_page.dart';
 import 'package:hris_firebase_flutter/view/history_page.dart';
 import 'package:hris_firebase_flutter/view/payroll_page.dart';
 import 'package:hris_firebase_flutter/widgets/body_home.dart';
@@ -11,6 +10,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart'
     show ImagePicker, ImageSource, XFile;
 import 'package:url_launcher/url_launcher.dart';
+
+import '../view/account_page.dart';
 
 class HomeProvider extends ChangeNotifier {
   int selectedIndex = 0;
@@ -36,7 +37,7 @@ class HomeProvider extends ChangeNotifier {
         return const PayrollPage();
       // Account/Profil Screen
       case 3:
-        // return const AccountPage();
+        return const AccountPage();
     }
     return null;
   }
@@ -141,6 +142,7 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // url_launcher to Quesioner
   void launchQuesioner() async {
     String url = "forms.gle/iPecSSdNnV2sb2wq8";
     final Uri quesionerUrl = Uri(scheme: 'https', path: url);
@@ -152,6 +154,7 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+  // url_launcher to Info Setting Camera
   Future<void> launchUrlInfoSettingCamera() async {
     String url = "www.leskompi.com/izin-aplikasi/";
     final Uri cameraInfoUrl = Uri(scheme: 'https', path: url);
